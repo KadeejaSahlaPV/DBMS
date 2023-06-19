@@ -1,0 +1,48 @@
+
+CREATE TABLE sales_man (
+  salesman_no INT PRIMARY KEY,
+  s_name VARCHAR(50) NOT NULL,
+  place VARCHAR(50),
+  phone VARCHAR(20) UNIQUE
+);
+
+CREATE TABLE sales_order (
+  order_no INT PRIMARY KEY,
+  order_date DATE NOT NULL,
+  salesman_no INT,
+  del_type CHAR(1) CHECK (del_type IN ('P', 'F')),
+  order_status VARCHAR(20) CHECK (order_status IN ('Inprocess', 'Fullfilled', 'Backorder', 'Cancelled')),
+  FOREIGN KEY (salesman_no) REFERENCES sales_man (salesman_no)
+);
+
+-- Inserting records into sales_man table
+INSERT INTO sales_man (salesman_no, s_name, place, phone)
+VALUES (1, 'John Doe', 'New York', '1234567890'),
+       (2, 'Jane Smith', 'Los Angeles', '9876543210'),
+       (3, 'Mark Johnson', 'Chicago', '5555555555');
+
+-- Inserting records into sales_order table
+INSERT INTO sales_order (order_no, order_date, salesman_no, del_type, order_status)
+VALUES (1001, '2023-06-01', 1, 'P', 'Inprocess'),
+       (1002, '2023-06-02', 2, 'F', 'Fullfilled'),
+       (1003, '2023-06-03', 3, 'P', 'Backorder');
+
+
+ALTER TABLE sales_man
+DROP CONSTRAINT sales_man_pkey;
+
+
+ALTER TABLE sales_order
+DROP CONSTRAINT sales_order_salesman_no_fkey,
+DROP CONSTRAINT sales_order_del_type_check,
+DROP CONSTRAINT sales_order_order_status_check;
+
+
+ALTER TABLE sales_man
+ADD PRIMARY KEY (salesman_no);
+
+
+ALTER TABLE sales_order
+ADD CONSTRAINT sales_order_salesman_no_fkey FOREIGN KEY (salesman_no) REFERENCES sales_man (salesman_no),
+ADD CONSTRAINT sales_order_del_type_check CHECK (del_type IN ('P', 'F')),
+ADD CONSTRAINT sales_order_order_status_check CHECK (order_status IN ('Inprocess', 'Fullfilled', 'Backorder', 'Cancelled'));
